@@ -16,8 +16,11 @@ var paddleWidth = 15;
 var paddleX = 50;
 var paddleY = 35;
 var px = 5;                     //change in x. As this is based on setInterval rate = speed
-var py = 5;                    //change in y. As this is based on setInterval rate = speed
-
+var py = 5;                     //change in y. As this is based on setInterval rate = speed
+var paddleLeftBlocked = false;
+var paddleRightBlocked = false;
+var paddleTopBlocked = false;
+var paddleBottomBlocked = false;
 
 var endZoneH = 55;
 var endZoneW = 100;
@@ -149,33 +152,62 @@ function collisionDetection() {
     //ensure that this collision detection is ABOVE the keypress function(S) call
 
 function collisionDetectionPaddelAndBrick() {
+
+    var skip = false;
+
     for(c=0; c<brickColumnCount; c++) {
         for(r=0; r<brickRowCount; r++) {
-            var b = bricks[c][r];
-            if (b.status == 1) {
-                // if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
-                //     dy = -dy;
-                //     b.status = 0;
-                // }
-                var leftEdge = x + ballRadius - b.x;
-                var rightEdge = (b.x + brickWidth) - (x - ballRadius);
-                var topEdge = y + ballRadius - b.y;
-                var bottomEdge = (b.y + brickHeight) - (y - ballRadius);
 
-                if (x + ballRadius > b.x && x - ballRadius < b.x + brickWidth && y + ballRadius > b.y && y - ballRadius < b.y + brickHeight) {
-                    //below IF / ELSE compares to see if the ball has hit the top / bottom or the sides of brick first to move accordingly.
-                    if ((Math.min(leftEdge , rightEdge))<(Math.min(topEdge , bottomEdge))){
-                        dx = -dx;
+            var b = bricks[c][r];
+
+            //this is to avoid having to check each if statement
+            // (the foreach continues but immediately Returns false)
+            if (skip) {
+                return false
+            }
+
+            //only check against bricks which exist
+            if (b.status == 1) {
+
+                //for the left and right movements of the paddle to be blocked...
+                // the paddle y OR the paddle y + Paddle Height must be within the brick's height
+                if(paddleY > b.y && paddleY < (b.y + brickHeight) || (paddleY + paddleHeight) > b.y && (paddleY + paddleHeight) < (b.y + brickHeight)) {
+                    if (paddleX < b.x + brickWidth && paddleX + paddleWidth > b.x) {
+                        paddleLeftBlocked = true;
+                        skip = true;
+                        console.log('Left blocked');
                     }
-                    else  {
-                        dy = -dy;
+                    if (paddleX + paddleWidth > b.x && paddleX < b.x + brickWidth) {
+                        paddleRightBlocked = true;
+                        skip = true;
+                        console.log('Right blocked');
+                    }
+                }
+
+                //for the up and down movements of the paddle to be blocked...
+                // the paddle x OR the paddle x + Paddle Width must be within the brick's width
+                if(paddleX > b.x && paddleX < (b.x + brickWidth) || (paddleX + paddleWidth) > b.x && (paddleX + paddleWidth) < (b.x + brickWidth)) {
+                    if (paddleY < b.y + brickHeight && paddleY + paddleHeight > b.y) {
+                        paddleTopBlocked = true;
+                        skip = true;
+                        console.log('Top blocked');
+                    }
+                    if (paddleY + paddleHeight > b.y && paddleY < b.y + brickHeight) {
+                        paddleBottomBlocked = true;
+                        skip = true;
+                        console.log('Bottom blocked');
                     }
                 }
             }
         }
     }
 
+    PaddleVsBrick = [paddleTopBlocked, paddleRightBlocked, paddleBottomBlocked , paddleLeftBlocked];
+    console.log(PaddleVsBrick)
+    return PaddleVsBrick;
 }
+
+
 //COLLISION detection for paddle and ball
     //if paddle touches ball then "game over!"
 
@@ -445,6 +477,7 @@ function draw() {
     drawBall();
     drawSpeed();
     collisionDetection();
+    collisionDetectionPaddelAndBrick();
     drawEndZone();
 
     //BALL MOVEMENT
@@ -459,7 +492,6 @@ function draw() {
     }
 
     //ball bouncing off the bottom (check ball is within the paddle)
-    //if(y + dy > canvas.height - ballRadius - paddleHeight) {
     if(y + dy > canvas.height - ballRadius) {
         if (x > paddleX && x < paddleX + paddleWidth) {
             dy = -dy;
@@ -474,21 +506,38 @@ function draw() {
     y += dy;
 
     //PADDLE MOVEMENT
+
+    // console.log('paddle Left Blocked' + paddleLeftBlocked )
+    // console.log('paddle Right Blocked' + paddleRightBlocked )
+    // console.log('paddle Top Blocked' + paddleTopBlocked )
+    // console.log('paddle Bottom Blocked' + paddleBottomBlocked)
+
+    console.log('Check ::::' + PaddleVsBrick)
+
     //paddle left and right
-    if(rightPressed && paddleX < canvas.width - paddleWidth) {
+    if(rightPressed && paddleX < canvas.width - paddleWidth && !paddleRightBlocked) {
+        console.log('move right');
         paddleX += px;
+        paddleRightBlocked = false;
     }
-    else if(leftPressed && paddleX > 0) {
+    else if(leftPressed && paddleX > 0 && !paddleLeftBlocked) {
+        console.log('move left');
         paddleX -= px;
+        paddleLeftBlocked = false;
     }
 
     //paddle top and bottom
-    if(upPressed && paddleY > 0 ) {
+    if(upPressed && paddleY > 0 && !paddleTopBlocked) {
+        console.log('move up');
         paddleY -= py;
+        paddleTopBlocked = false;
     }
-    else if (downPressed && paddleY < canvas.height - paddleHeight) {
+    else if (downPressed && paddleY < canvas.height - paddleHeight && !paddleBottomBlocked) {
+        console.log('move down');
         paddleY += py;
+        paddleBottomBlocked = false;
     }
+
 }
 
 
