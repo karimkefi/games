@@ -11,8 +11,8 @@ var dx = 2;                     //change in x. As this is based on setInterval r
 var dy = -2;                    //change in y. As this is based on setInterval rate = speed
 var ballRadius = 10;            //size of ball
 
-var paddleHeight = 15;
-var paddleWidth = 15;
+var paddleHeight = 12;
+var paddleWidth = 12;
 var paddleX = 50;
 var paddleY = 35;
 var px = 5;                     //change in x. As this is based on setInterval rate = speed
@@ -58,12 +58,6 @@ function drawSpeed() {
     ctx.font = "16px Arial";
     ctx.fillStyle = "#dd3d38";
     ctx.fillText("Ball Speed: " + speed, 775 , 20);           //last 2 arguments are the x,y coordinates
-}
-
-function drawStart() {
-    ctx.font = "16px Arial";
-    ctx.fillStyle = "#0095DD";
-    ctx.fillText("Start", 8 , 20);           //last 2 arguments are the x,y coordinates
 }
 
 //draw bricks
@@ -156,6 +150,12 @@ function collisionDetectionPaddelAndBrick() {
     var skip = false;
 
     for(c=0; c<brickColumnCount; c++) {
+
+        if (skip) {
+            console.log('skip top FE');
+            return false;
+        }
+
         for(r=0; r<brickRowCount; r++) {
 
             var b = bricks[c][r];
@@ -163,53 +163,68 @@ function collisionDetectionPaddelAndBrick() {
             //this is to avoid having to check each if statement
             // (the foreach continues but immediately Returns false)
             if (skip) {
-                return false
+                console.log('skip bottom FE');
+                return false;
             }
 
             //only check against bricks which exist
             if (b.status == 1) {
 
                 //for the left and right movements of the paddle to be blocked...
-                // the paddle y OR the paddle y + Paddle Height must be within the brick's height
+                //the paddle y OR the paddle y + Paddle Height must be within the brick's height
                 if(paddleY > b.y && paddleY < (b.y + brickHeight) || (paddleY + paddleHeight) > b.y && (paddleY + paddleHeight) < (b.y + brickHeight)) {
-                    if (paddleX < b.x + brickWidth && paddleX + paddleWidth > b.x) {
+                    if ((paddleX - px) < (b.x + brickWidth) && (paddleX + paddleWidth) > b.x) {
                         paddleLeftBlocked = true;
                         skip = true;
-                        console.log('Left blocked');
+                        console.log('Left blocked = true');
                     }
-                    if (paddleX + paddleWidth > b.x && paddleX < b.x + brickWidth) {
+                    if ((paddleX + px + paddleWidth) > b.x && paddleX < (b.x + brickWidth)) {
                         paddleRightBlocked = true;
                         skip = true;
-                        console.log('Right blocked');
+                        console.log('Right blocked = true');
                     }
                 }
 
                 //for the up and down movements of the paddle to be blocked...
-                // the paddle x OR the paddle x + Paddle Width must be within the brick's width
+                //the paddle x OR the paddle x + Paddle Width must be within the brick's width
                 if(paddleX > b.x && paddleX < (b.x + brickWidth) || (paddleX + paddleWidth) > b.x && (paddleX + paddleWidth) < (b.x + brickWidth)) {
-                    if (paddleY < b.y + brickHeight && paddleY + paddleHeight > b.y) {
+                    if ((paddleY - py) < (b.y + brickHeight) && (paddleY + paddleHeight) > b.y) {
                         paddleTopBlocked = true;
                         skip = true;
-                        console.log('Top blocked');
+                        console.log('Top blocked = true');
                     }
-                    if (paddleY + paddleHeight > b.y && paddleY < b.y + brickHeight) {
+                    if ((paddleY + py + paddleHeight) > b.y && paddleY < (b.y + brickHeight)) {
                         paddleBottomBlocked = true;
                         skip = true;
-                        console.log('Bottom blocked');
+                        console.log('Bottom blocked = true');
                     }
                 }
             }
         }
     }
 
-    PaddleVsBrick = [paddleTopBlocked, paddleRightBlocked, paddleBottomBlocked , paddleLeftBlocked];
-    console.log(PaddleVsBrick)
+    var PaddleVsBrick = [paddleTopBlocked, paddleRightBlocked, paddleBottomBlocked , paddleLeftBlocked];
+    // if(skip) {
+    //     console.log(PaddleVsBrick);
+    // }
     return PaddleVsBrick;
 }
 
 
 //COLLISION detection for paddle and ball
     //if paddle touches ball then "game over!"
+
+function collisionDetectionPaddelAndBall() {
+
+    if (x + ballRadius > paddleX &&
+        x - ballRadius < paddleX + paddleWidth &&
+        y + ballRadius > paddleY &&
+        y - ballRadius < paddleY + paddleHeight) {
+
+        alert("GAME OVER");
+        document.location.reload();
+    }
+}
 
 
 
@@ -472,12 +487,12 @@ function draw() {
     ctx.clearRect(0, 0 , canvas.width, canvas.height);  //this clears the whole canvas before every draw repaint
     removeBricksForLevel1();                            //removebricks must be before drawbricks()
     drawBricks();
-    drawStart();
     drawPaddle();
     drawBall();
     drawSpeed();
     collisionDetection();
     collisionDetectionPaddelAndBrick();
+    collisionDetectionPaddelAndBall();
     drawEndZone();
 
     //BALL MOVEMENT
@@ -507,13 +522,6 @@ function draw() {
 
     //PADDLE MOVEMENT
 
-    // console.log('paddle Left Blocked' + paddleLeftBlocked )
-    // console.log('paddle Right Blocked' + paddleRightBlocked )
-    // console.log('paddle Top Blocked' + paddleTopBlocked )
-    // console.log('paddle Bottom Blocked' + paddleBottomBlocked)
-
-    console.log('Check ::::' + PaddleVsBrick)
-
     //paddle left and right
     if(rightPressed && paddleX < canvas.width - paddleWidth && !paddleRightBlocked) {
         console.log('move right');
@@ -537,6 +545,11 @@ function draw() {
         paddleY += py;
         paddleBottomBlocked = false;
     }
+
+    paddleLeftBlocked = false;
+    paddleRightBlocked = false;
+    paddleBottomBlocked = false;
+    paddleTopBlocked = false;
 
 }
 
@@ -583,7 +596,7 @@ document.addEventListener("keyup", keyUpHandler, false);
 
 
 //repaint page
-setInterval(draw, 30);
+setInterval(draw, 50);
 // setTimeout(draw, 30);
 
 
