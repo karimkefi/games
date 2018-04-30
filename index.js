@@ -1,6 +1,3 @@
-//Based on Tutorial
-//https://developer.mozilla.org/en-US/docs/Games/Tutorials/2D_Breakout_game_pure_JavaScript/Create_the_Canvas_and_draw_on_it
-
 
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
@@ -211,11 +208,8 @@ function collisionDetectionPaddelAndBrick() {
 }
 
 
-//COLLISION detection for paddle and ball
-    //if paddle touches ball then "game over!"
-
+//COLLISION detection for paddle and ball... if paddle touches ball then "game over!"
 function collisionDetectionPaddelAndBall() {
-
     if (x + ballRadius > paddleX &&
         x - ballRadius < paddleX + paddleWidth &&
         y + ballRadius > paddleY &&
@@ -226,6 +220,17 @@ function collisionDetectionPaddelAndBall() {
     }
 }
 
+
+//End Zone: Collision detection if paddle enters end zone. If yes, then "You win"
+function paddelInEndZone() {
+    if (endZoneX < paddleX &&
+        endZoneX + endZoneW > paddleX + paddleWidth &&
+        endZoneY < paddleY &&
+        endZoneY + endZoneH > paddleY + paddleHeight) {
+        alert("YOU WIN!");
+        document.location.reload();
+    }
+}
 
 
 
@@ -469,11 +474,6 @@ function removeBricksForLevel1 () {
 }
 
 
-//End Zone
-    //Collision detection if paddle enters end zone
-    //if yes, then "You win"
-
-
 function drawEndZone() {
     ctx.beginPath();
         ctx.rect(endZoneX, endZoneY, endZoneW, endZoneH);
@@ -494,6 +494,7 @@ function draw() {
     collisionDetectionPaddelAndBrick();
     collisionDetectionPaddelAndBall();
     drawEndZone();
+    paddelInEndZone();
 
     //BALL MOVEMENT
     //ball bouncing off left or right
