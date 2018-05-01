@@ -4,8 +4,8 @@ var ctx = canvas.getContext("2d");
 
 var x = canvas.width - 60;      //starting ball position (x)
 var y = 45;                     //starting ball position (y)
-var dx = 2;                     //change in x. As this is based on setInterval rate = speed
-var dy = -2;                    //change in y. As this is based on setInterval rate = speed
+var dx = 6;                     //change in x. As this is based on setInterval rate = speed
+var dy = -6;                    //change in y. As this is based on setInterval rate = speed
 var ballRadius = 10;            //size of ball
 
 var paddleHeight = 12;
@@ -24,12 +24,10 @@ var endZoneW = 100;
 var endZoneX = canvas.width - endZoneW - 5;
 var endZoneY = canvas.height - endZoneH - 5 ;
 
-
 var rightPressed = false;
 var leftPressed = false;
 var upPressed = false;
 var downPressed = false;
-
 
 var brickRowCount = 25;
 var brickColumnCount = 25;
@@ -119,14 +117,15 @@ function collisionDetection() {
 
                 if (x + ballRadius > b.x && x - ballRadius < b.x + brickWidth && y + ballRadius > b.y && y - ballRadius < b.y + brickHeight) {
                     //below IF / ELSE compares to see if the ball has hit the top / bottom or the sides of brick first to move accordingly.
+                    //change speed of ball upto max of 15px
                     if ((Math.min(leftEdge , rightEdge))<(Math.min(topEdge , bottomEdge))){
-                        dx = -dx;
                         b.status = 0;
+                        dx = -dx;
                         speed++;
                     }
                     else  {
-                        dy = -dy;
                         b.status = 0;
+                        dy = -dy;
                         speed++;
                     }
                 }
@@ -149,7 +148,6 @@ function collisionDetectionPaddelAndBrick() {
     for(c=0; c<brickColumnCount; c++) {
 
         if (skip) {
-            console.log('skip top FE');
             return false;
         }
 
@@ -160,7 +158,6 @@ function collisionDetectionPaddelAndBrick() {
             //this is to avoid having to check each if statement
             // (the foreach continues but immediately Returns false)
             if (skip) {
-                console.log('skip bottom FE');
                 return false;
             }
 
@@ -200,11 +197,7 @@ function collisionDetectionPaddelAndBrick() {
         }
     }
 
-    var PaddleVsBrick = [paddleTopBlocked, paddleRightBlocked, paddleBottomBlocked , paddleLeftBlocked];
-    // if(skip) {
-    //     console.log(PaddleVsBrick);
-    // }
-    return PaddleVsBrick;
+    return true;
 }
 
 
@@ -234,7 +227,7 @@ function paddelInEndZone() {
 
 
 
-//remove bricks (make level 1) bricks[c][r]
+//Bricks[col][row]
 function removeBricksForLevel1 () {
 
     //player starting point
@@ -270,29 +263,11 @@ function removeBricksForLevel1 () {
     bricks[24][23].status = 0;
     bricks[24][24].status = 0;
 
-    //maze
+    //maze path
     bricks[1][3].status = 0;
     bricks[1][4].status = 0;
     bricks[1][5].status = 0;
-
-    bricks[2][5].status = 0;
-    bricks[2][6].status = 0;
-    bricks[2][7].status = 0;
-    bricks[2][8].status = 0;
-    bricks[2][9].status = 0;
-
-    bricks[3][9].status = 0;
-    bricks[4][9].status = 0;
-
-    bricks[4][10].status = 0;
-    bricks[4][11].status = 0;
-    bricks[4][12].status = 0;
-    bricks[4][13].status = 0;
-
-    bricks[3][13].status = 0;
-    bricks[2][13].status = 0;
     bricks[1][13].status = 0;
-
     bricks[1][14].status = 0;
     bricks[1][15].status = 0;
     bricks[1][16].status = 0;
@@ -300,16 +275,34 @@ function removeBricksForLevel1 () {
     bricks[1][18].status = 0;
     bricks[1][19].status = 0;
 
+    bricks[2][5].status = 0;
+    bricks[2][6].status = 0;
+    bricks[2][7].status = 0;
+    bricks[2][8].status = 0;
+    bricks[2][9].status = 0;
+    bricks[2][13].status = 0;
     bricks[2][19].status = 0;
-    bricks[3][19].status = 0;
 
+    bricks[3][1].status = 0;
+    bricks[3][9].status = 0;
+    bricks[3][13].status = 0;
+    bricks[3][19].status = 0;
     bricks[3][18].status = 0;
     bricks[3][17].status = 0;
     bricks[3][16].status = 0;
 
+    bricks[4][1].status = 0;
+    bricks[4][9].status = 0;
+    bricks[4][10].status = 0;
+    bricks[4][11].status = 0;
+    bricks[4][12].status = 0;
+    bricks[4][13].status = 0;
     bricks[4][16].status = 0;
-    bricks[5][16].status = 0;
 
+    bricks[5][1].status = 0;
+    bricks[5][2].status = 0;
+    bricks[5][3].status = 0;
+    bricks[5][16].status = 0;
     bricks[5][17].status = 0;
     bricks[5][18].status = 0;
     bricks[5][19].status = 0;
@@ -318,134 +311,29 @@ function removeBricksForLevel1 () {
     bricks[5][22].status = 0;
     bricks[5][23].status = 0;
 
+    bricks[6][3].status = 0;
     bricks[6][23].status = 0;
+
+    bricks[7][3].status = 0;
     bricks[7][23].status = 0;
+
+    bricks[8][3].status = 0;
+    bricks[8][2].status = 0;
+    bricks[8][19].status = 0;
+    bricks[8][20].status = 0;
+    bricks[8][21].status = 0;
+    bricks[8][22].status = 0;
     bricks[8][23].status = 0;
 
-    bricks[8][22].status = 0;
-    bricks[8][21].status = 0;
-    bricks[8][20].status = 0;
-    bricks[8][19].status = 0;
-
+    bricks[9][2].status = 0;
     bricks[9][19].status = 0;
-
     bricks[9][18].status = 0;
     bricks[9][17].status = 0;
     bricks[9][16].status = 0;
     bricks[9][15].status = 0;
 
-    bricks[10][15].status = 0;
-    bricks[11][15].status = 0;
-    bricks[12][15].status = 0;
-    bricks[13][15].status = 0;
-    bricks[14][15].status = 0;
-    bricks[15][15].status = 0;
-    bricks[16][15].status = 0;
-
-    bricks[16][16].status = 0;
-
-    bricks[17][16].status = 0;
-    bricks[18][16].status = 0;
-    bricks[19][16].status = 0;
-
-    bricks[19][17].status = 0;
-    bricks[19][18].status = 0;
-
-    bricks[20][18].status = 0;
-    bricks[21][18].status = 0;
-
-    bricks[21][17].status = 0;
-    bricks[22][17].status = 0;
-    bricks[23][17].status = 0;
-
-    bricks[23][18].status = 0;
-    bricks[23][19].status = 0;
-    bricks[23][20].status = 0;
-    bricks[23][21].status = 0;
-
-    bricks[13][16].status = 0;
-    bricks[13][17].status = 0;
-    bricks[13][18].status = 0;
-
-    bricks[12][18].status = 0;
-    bricks[14][18].status = 0;
-    bricks[15][18].status = 0;
-
-    bricks[15][19].status = 0;
-    bricks[16][19].status = 0;
-    bricks[16][20].status = 0;
-    bricks[16][21].status = 0;
-    bricks[16][22].status = 0;
-    bricks[17][22].status = 0;
-    bricks[18][22].status = 0;
-    bricks[19][22].status = 0;
-
-    bricks[19][23].status = 0;
-    bricks[20][23].status = 0;
-    bricks[21][23].status = 0;
-
-    bricks[12][19].status = 0;
-    bricks[12][20].status = 0;
-    bricks[12][21].status = 0;
-    bricks[12][22].status = 0;
-    bricks[12][23].status = 0;
-
-    bricks[13][23].status = 0;
-    bricks[14][23].status = 0;
-    bricks[15][23].status = 0;
-    bricks[16][23].status = 0;
-
-    bricks[13][12].status = 0;
-    bricks[13][13].status = 0;
-    bricks[13][14].status = 0;
-
-    bricks[14][12].status = 0;
-    bricks[15][12].status = 0;
-    bricks[16][12].status = 0;
-    bricks[17][12].status = 0;
-    bricks[18][12].status = 0;
-    bricks[19][12].status = 0;
-    bricks[20][12].status = 0;
-    bricks[21][12].status = 0;
-
-    bricks[21][11].status = 0;
-    bricks[22][11].status = 0;
-
-    bricks[23][11].status = 0;
-    bricks[23][12].status = 0;
-    bricks[23][13].status = 0;
-    bricks[23][14].status = 0;
-    bricks[23][15].status = 0;
-    bricks[23][16].status = 0;
-
-    bricks[3][1].status = 0;
-    bricks[4][1].status = 0;
-    bricks[5][1].status = 0;
-
-    bricks[5][2].status = 0;
-    bricks[5][3].status = 0;
-
-    bricks[6][3].status = 0;
-    bricks[7][3].status = 0;
-    bricks[8][3].status = 0;
-
-    bricks[8][2].status = 0;
-    bricks[9][2].status = 0;
     bricks[10][2].status = 0;
-    bricks[11][2].status = 0;
-    bricks[12][2].status = 0;
-
-    bricks[12][3].status = 0;
-    bricks[12][4].status = 0;
-    bricks[12][5].status = 0;
-    bricks[12][6].status = 0;
-
-    bricks[11][6].status = 0;
     bricks[10][6].status = 0;
-    bricks[13][6].status = 0;
-    bricks[14][6].status = 0;
-    bricks[15][6].status = 0;
-
     bricks[10][7].status = 0;
     bricks[10][8].status = 0;
     bricks[10][9].status = 0;
@@ -454,23 +342,115 @@ function removeBricksForLevel1 () {
     bricks[10][12].status = 0;
     bricks[10][13].status = 0;
     bricks[10][14].status = 0;
+    bricks[10][15].status = 0;
 
+    bricks[11][15].status = 0;
+    bricks[11][2].status = 0;
+    bricks[11][6].status = 0;
+
+    bricks[12][2].status = 0;
+    bricks[12][3].status = 0;
+    bricks[12][4].status = 0;
+    bricks[12][5].status = 0;
+    bricks[12][6].status = 0;
+    bricks[12][15].status = 0;
+    bricks[12][18].status = 0;
+    bricks[12][19].status = 0;
+    bricks[12][20].status = 0;
+    bricks[12][21].status = 0;
+    bricks[12][22].status = 0;
+    bricks[12][23].status = 0;
+
+    bricks[13][6].status = 0;
+    bricks[13][12].status = 0;
+    bricks[13][13].status = 0;
+    bricks[13][14].status = 0;
+    bricks[13][15].status = 0;
+    bricks[13][16].status = 0;
+    bricks[13][17].status = 0;
+    bricks[13][18].status = 0;
+    bricks[13][23].status = 0;
+
+    bricks[14][6].status = 0;
+    bricks[14][15].status = 0;
+    bricks[14][18].status = 0;
+    bricks[14][23].status = 0;
+    bricks[14][12].status = 0;
+
+    bricks[15][6].status = 0;
     bricks[15][7].status = 0;
     bricks[15][8].status = 0;
-    bricks[16][8].status = 0;
-    bricks[17][8].status = 0;
-    bricks[18][8].status = 0;
+    bricks[15][12].status = 0;
+    bricks[15][15].status = 0;
+    bricks[15][18].status = 0;
+    bricks[15][19].status = 0;
+    bricks[15][23].status = 0;
 
-    bricks[18][7].status = 0;
-    bricks[18][6].status = 0;
-    bricks[18][5].status = 0;
+    bricks[16][8].status = 0;
+    bricks[16][12].status = 0;
+    bricks[16][15].status = 0;
+    bricks[16][16].status = 0;
+    bricks[16][19].status = 0;
+    bricks[16][20].status = 0;
+    bricks[16][21].status = 0;
+    bricks[16][22].status = 0;
+    bricks[16][23].status = 0;
+
+    bricks[17][8].status = 0;
+    bricks[17][12].status = 0;
+    bricks[17][16].status = 0;
+    bricks[17][22].status = 0;
+
     bricks[18][4].status = 0;
+    bricks[18][5].status = 0;
+    bricks[18][6].status = 0;
+    bricks[18][8].status = 0;
+    bricks[18][7].status = 0;
+    bricks[18][12].status = 0;
+    bricks[18][16].status = 0;
+    bricks[18][22].status = 0;
 
     bricks[19][4].status = 0;
-    bricks[20][4].status = 0;
-    bricks[20][3].status = 0;
+    bricks[19][12].status = 0;
+    bricks[19][16].status = 0;
+    bricks[19][17].status = 0;
+    bricks[19][18].status = 0;
+    bricks[19][22].status = 0;
+    bricks[19][23].status = 0;
+
     bricks[20][2].status = 0;
+    bricks[20][3].status = 0;
+    bricks[20][4].status = 0;
+    bricks[20][12].status = 0;
+    bricks[20][18].status = 0;
+    // bricks[20][23].status = 0;
+
     bricks[21][2].status = 0;
+    bricks[21][11].status = 0;
+    bricks[21][12].status = 0;
+    bricks[21][17].status = 0;
+    bricks[21][18].status = 0;
+    bricks[21][23].status = 0;
+
+    // bricks[22][11].status = 0;
+    bricks[22][17].status = 0;
+
+    bricks[23][7].status = 0;
+    bricks[23][8].status = 0;
+    bricks[23][9].status = 0;
+    bricks[23][10].status = 0;
+    bricks[23][11].status = 0;
+    bricks[23][12].status = 0;
+    bricks[23][13].status = 0;
+    bricks[23][14].status = 0;
+    bricks[23][15].status = 0;
+    bricks[23][16].status = 0;
+    bricks[23][17].status = 0;
+    bricks[23][18].status = 0;
+    bricks[23][19].status = 0;
+    bricks[23][20].status = 0;
+    bricks[23][21].status = 0;
+
 }
 
 
@@ -498,25 +478,25 @@ function draw() {
 
     //BALL MOVEMENT
     //ball bouncing off left or right
-    if(x  + dx > canvas.width - ballRadius || x + dx < ballRadius) {
+    if(x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
         dx = -dx;
     }
 
     //ball bouncing off top
-    if(y + dy < ballRadius) {
+    if(y + dy < ballRadius || y + dy > canvas.height - ballRadius) {
         dy = -dy;
     }
 
     //ball bouncing off the bottom (check ball is within the paddle)
-    if(y + dy > canvas.height - ballRadius) {
-        if (x > paddleX && x < paddleX + paddleWidth) {
-            dy = -dy;
-        }
-        else {
-            alert("GAME OVER");
-            document.location.reload();
-        }
-    }
+    // if(y + dy > canvas.height - ballRadius) {
+    //     if (x > paddleX && x < paddleX + paddleWidth) {
+    //         dy = -dy;
+    //     }
+    //     else {
+    //         alert("GAME OVER");
+    //         document.location.reload();
+    //     }
+    // }
 
     x += dx;
     y += dy;
