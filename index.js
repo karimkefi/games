@@ -241,7 +241,7 @@ function removeBricksForLevel1 () {
     bricks[2][1].status = 0;
     bricks[2][2].status = 0;
 
-    //ball starting point
+    //ball1 starting point
     bricks[22][0].status = 0;
     bricks[23][0].status = 0;
     bricks[24][0].status = 0;
